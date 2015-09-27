@@ -11,10 +11,11 @@ public:
     std::string readLine();
 
 private:
-    void lineReadHandler(const boost::system::error_code& e, std::size_t size);
     boost::asio::io_service io;
     boost::asio::serial_port serial;
     boost::asio::streambuf readBuffer;
+    static Serial* lastInstance;
+    friend void lineReadHandler(const boost::system::error_code& e, std::size_t size);
 };
 
 

@@ -4,6 +4,8 @@
 #include <boost/asio.hpp>
 #include <thread>
 
+void lineReadHandler(const boost::system::error_code& e, std::size_t size);
+Serial* Serial::lastInstance = 0;
 /**
  * Constructor.
  * \param port device name, example "/dev/ttyUSB0" or "COM4"
@@ -16,6 +18,7 @@ Serial::Serial(std::string port, unsigned int baud_rate)
 {
     serial.set_option(boost::asio::serial_port_base::baud_rate(baud_rate));
     boost::asio::async_read_until(serial, readBuffer, '\n', lineReadHandler);
+    lastInstance = this;
 }
 
 /**
@@ -57,10 +60,12 @@ std::string Serial::readLine()
 
 void lineReadHandler(const boost::system::error_code& e, std::size_t size) {
   if (!e) {
-    std::istream is(&readBuffer);
+    std::istream is(&Serial::lastInstance->readBuffer);
     std::string line;
     std::getline(is, line);
     //handle this line
   }
-  boost::asio::async_read_until(serial, readBuffer, '\n', lineReadHandler);
+  if (Serial::lastInstance) {
+    boost::asio::async_read_until(Serial::lastInstance->serial, Serial::lastInstance->readBuffer, '\n', lineReadHandler);
+  }
 }

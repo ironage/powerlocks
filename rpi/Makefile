@@ -46,9 +46,11 @@ OBJECTS_DIR   = ./
 ####### Files
 
 SOURCES       = main.cpp \
-		serial.cpp 
+		serial.cpp \
+		gpioclass.cpp 
 OBJECTS       = main.o \
-		serial.o
+		serial.o \
+		gpioclass.o
 DIST          = /usr/lib/i386-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/i386-linux-gnu/qt5/mkspecs/common/shell-unix.conf \
 		/usr/lib/i386-linux-gnu/qt5/mkspecs/common/unix.conf \
@@ -263,7 +265,7 @@ qmake_all: FORCE
 
 dist: 
 	@test -d .tmp/rpi1.0.0 || mkdir -p .tmp/rpi1.0.0
-	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/rpi1.0.0/ && $(COPY_FILE) --parents serial.h .tmp/rpi1.0.0/ && $(COPY_FILE) --parents main.cpp serial.cpp .tmp/rpi1.0.0/ && (cd `dirname .tmp/rpi1.0.0` && $(TAR) rpi1.0.0.tar rpi1.0.0 && $(COMPRESS) rpi1.0.0.tar) && $(MOVE) `dirname .tmp/rpi1.0.0`/rpi1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/rpi1.0.0
+	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/rpi1.0.0/ && $(COPY_FILE) --parents serial.h gpioclass.h .tmp/rpi1.0.0/ && $(COPY_FILE) --parents main.cpp serial.cpp gpioclass.cpp .tmp/rpi1.0.0/ && (cd `dirname .tmp/rpi1.0.0` && $(TAR) rpi1.0.0.tar rpi1.0.0 && $(COMPRESS) rpi1.0.0.tar) && $(MOVE) `dirname .tmp/rpi1.0.0`/rpi1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/rpi1.0.0
 
 
 clean:compiler_clean 
@@ -300,11 +302,15 @@ compiler_clean:
 
 ####### Compile
 
-main.o: main.cpp serial.h
+main.o: main.cpp gpioclass.h \
+		serial.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
 serial.o: serial.cpp serial.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o serial.o serial.cpp
+
+gpioclass.o: gpioclass.cpp gpioclass.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o gpioclass.o gpioclass.cpp
 
 ####### Install
 

@@ -16,6 +16,8 @@ TEMPLATE = app
 
 LIBS += -lboost_system
 
+QMAKE_CXXFLAGS += -std=c++11
+
 SOURCES += main.cpp \
     serial.cpp \
     gpioclass.cpp
